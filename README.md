@@ -34,6 +34,8 @@ Open-Falcon>=0.0.5
     
     # 需要监听的本地jmx端口，支持监听多个端口，多端口用逗号分隔
     jmx.ports=10000,10001,10002,10003
+    # 需要监听端口对应的应用名称，用逗号分隔，与jmx.ports一一对应
+    jmx.processes=gc,pc,trade,store
     
     # 本地agent的上报url，如果使用open-falcon的默认配置，则这里不需要改变
     agent.posturl=http://localhost:1988/v1/push
