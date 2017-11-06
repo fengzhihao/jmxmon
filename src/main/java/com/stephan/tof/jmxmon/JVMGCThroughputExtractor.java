@@ -15,9 +15,9 @@ import com.stephan.tof.jmxmon.jmxutil.ProxyClient;
 
 public class JVMGCThroughputExtractor extends JVMDataExtractor<Double> {
 
-	public JVMGCThroughputExtractor(ProxyClient proxyClient, int jmxPort)
+	public JVMGCThroughputExtractor(ProxyClient proxyClient, int jmxPort, String jmxProcess)
 			throws IOException {
-		super(proxyClient, jmxPort);
+		super(proxyClient, jmxPort, jmxProcess);
 	}
 
 	@Override
@@ -45,7 +45,7 @@ public class JVMGCThroughputExtractor extends JVMDataExtractor<Double> {
 		item.setEndpoint(Config.I.getHostname());
 		item.setMetric(StringUtils.lowerCase(Constants.gcThroughput));
 		item.setStep(Constants.defaultStep);
-		item.setTags(StringUtils.lowerCase("jmxport=" + getJmxPort()));	
+		item.setTags(StringUtils.lowerCase(genTag()));	
 		item.setTimestamp(System.currentTimeMillis() / 1000);
 		item.setValue(jmxResultData);
 		

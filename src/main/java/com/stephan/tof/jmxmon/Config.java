@@ -27,6 +27,7 @@ public class Config {
 	
 	private String jmxHost;
 	private int[] jmxPorts;
+	private String[] jmxProcesses;
 	
 	private Config(){}
 	
@@ -66,6 +67,11 @@ public class Config {
 		jmxPorts = new int[jmxPortArray.length];
 		for (int i = 0; i < jmxPortArray.length; i++) {
 			jmxPorts[i] = Integer.parseInt(jmxPortArray[i]);
+		}
+		
+		jmxProcesses = config.getStringArray("jmx.processes");
+		if(jmxProcesses.length != jmxPortArray.length) {
+		    logger.warn("jmx.processes length is not equal to jmx.ports length!");
 		}
 		
 		logger.info("init config ok");
@@ -127,4 +133,8 @@ public class Config {
 	public JVMContext getJvmContext() {
 		return jvmContext;
 	}
+
+    public String[] getJmxProcesses() {
+        return jmxProcesses;
+    }
 }

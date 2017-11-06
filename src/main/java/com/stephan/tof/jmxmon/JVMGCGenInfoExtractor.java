@@ -18,8 +18,8 @@ import com.stephan.tof.jmxmon.jmxutil.ProxyClient;
 
 public class JVMGCGenInfoExtractor extends JVMDataExtractor<Map<String, GCGenInfo>> {
 
-	public JVMGCGenInfoExtractor(ProxyClient proxyClient, int jmxPort) throws IOException {
-		super(proxyClient, jmxPort);
+	public JVMGCGenInfoExtractor(ProxyClient proxyClient, int jmxPort, String jmxProcess) throws IOException {
+		super(proxyClient, jmxPort, jmxProcess);
 	}
 
 	/**
@@ -70,13 +70,15 @@ public class JVMGCGenInfoExtractor extends JVMDataExtractor<Map<String, GCGenInf
 		List<FalconItem> items = new ArrayList<FalconItem>();
 		
 		// 将jvm信息封装成openfalcon格式数据
+		String tag;
 		for (String gcMXBeanName : jmxResultData.keySet()) {
 			FalconItem avgTimeItem = new FalconItem();
+			tag = genTag();
 			avgTimeItem.setCounterType(CounterType.GAUGE.toString());
 			avgTimeItem.setEndpoint(Config.I.getHostname());
 			avgTimeItem.setMetric(StringUtils.lowerCase(gcMXBeanName + Constants.metricSeparator + Constants.gcAvgTime));
 			avgTimeItem.setStep(Constants.defaultStep);
-			avgTimeItem.setTags(StringUtils.lowerCase("jmxport=" + getJmxPort()));	
+			avgTimeItem.setTags(StringUtils.lowerCase(tag));	
 			avgTimeItem.setTimestamp(System.currentTimeMillis() / 1000);
 			avgTimeItem.setValue(jmxResultData.get(gcMXBeanName).getGcAvgTime());
 			items.add(avgTimeItem);
@@ -86,7 +88,7 @@ public class JVMGCGenInfoExtractor extends JVMDataExtractor<Map<String, GCGenInf
 			countItem.setEndpoint(Config.I.getHostname());
 			countItem.setMetric(StringUtils.lowerCase(gcMXBeanName + Constants.metricSeparator + Constants.gcCount));
 			countItem.setStep(Constants.defaultStep);
-			countItem.setTags(StringUtils.lowerCase("jmxport=" + getJmxPort()));	
+			countItem.setTags(StringUtils.lowerCase(tag));	
 			countItem.setTimestamp(System.currentTimeMillis() / 1000);
 			countItem.setValue(jmxResultData.get(gcMXBeanName).getGcCount());
 			items.add(countItem);

@@ -51,26 +51,30 @@ public class JMXMonitor {
 		try {
 			List<FalconItem> items = new ArrayList<FalconItem>();
 			
-			for (int jmxPort : Config.I.getJmxPorts()) {
+			int jmxPort;
+			String jmxProcess;
+			for (int i=0; i < Config.I.getJmxPorts().length; i++) {
 				// 从JMX中获取JVM信息
+			    jmxPort = Config.I.getJmxPorts()[i];
+			    jmxProcess = Config.I.getJmxProcesses()[i];
 				ProxyClient proxyClient = null;
 				try {
 					proxyClient = ProxyClient.getProxyClient(Config.I.getJmxHost(), jmxPort, null, null);
 					proxyClient.connect();
 					
-					JMXCall<Map<String, GCGenInfo>> gcGenInfoExtractor = new JVMGCGenInfoExtractor(proxyClient, jmxPort);
+					JMXCall<Map<String, GCGenInfo>> gcGenInfoExtractor = new JVMGCGenInfoExtractor(proxyClient, jmxPort, jmxProcess);
 					Map<String, GCGenInfo> genInfoMap = gcGenInfoExtractor.call();
 					items.addAll(gcGenInfoExtractor.build(genInfoMap));
 					
-					JMXCall<Double> gcThroughputExtractor = new JVMGCThroughputExtractor(proxyClient, jmxPort);
+					JMXCall<Double> gcThroughputExtractor = new JVMGCThroughputExtractor(proxyClient, jmxPort, jmxProcess);
 					Double gcThroughput = gcThroughputExtractor.call();
 					items.addAll(gcThroughputExtractor.build(gcThroughput));
 					
-					JMXCall<MemoryUsedInfo> memoryUsedExtractor = new JVMMemoryUsedExtractor(proxyClient, jmxPort);
+					JMXCall<MemoryUsedInfo> memoryUsedExtractor = new JVMMemoryUsedExtractor(proxyClient, jmxPort, jmxProcess);
 					MemoryUsedInfo memoryUsedInfo = memoryUsedExtractor.call();
 					items.addAll(memoryUsedExtractor.build(memoryUsedInfo));
 					
-					JMXCall<ThreadInfo> threadExtractor = new JVMThreadExtractor(proxyClient, jmxPort);
+					JMXCall<ThreadInfo> threadExtractor = new JVMThreadExtractor(proxyClient, jmxPort, jmxProcess);
 					ThreadInfo threadInfo = threadExtractor.call();
 					items.addAll(threadExtractor.build(threadInfo));
 				} finally {
